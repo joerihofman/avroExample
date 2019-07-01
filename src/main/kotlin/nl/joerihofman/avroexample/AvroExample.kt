@@ -2,7 +2,7 @@ package nl.joerihofman.avroexample
 
 import org.slf4j.LoggerFactory
 
-val logger = LoggerFactory.getLogger("main")
+private val logger = LoggerFactory.getLogger("main")
 
 fun main() {
     val exampleRecord = AvroExampleRecord()

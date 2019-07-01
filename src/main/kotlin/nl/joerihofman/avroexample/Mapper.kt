@@ -9,34 +9,36 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class Mapper {
+
     companion object {
-        val writer = SpecificDatumWriter(AvroExampleRecord::class.java)
-        val reader = SpecificDatumReader(AvroExampleRecord::class.java)
-        val stream = ByteArrayOutputStream()
+        private val writer = SpecificDatumWriter(AvroExampleRecord::class.java)
+        private val reader = SpecificDatumReader(AvroExampleRecord::class.java)
+
+        private val logger = LoggerFactory.getLogger(Mapper::class.java)
     }
 
-    val logger = LoggerFactory.getLogger(Mapper::class.java)
 
     fun jsonToAvro(avroSchema: AvroExampleRecord): ByteArray {
         var data = ByteArray(0)
+        val stream = ByteArrayOutputStream()
         try {
             val jsonEncoder = EncoderFactory.get().jsonEncoder(AvroExampleRecord.`SCHEMA$`, stream)
             writer.write(avroSchema, jsonEncoder)
             jsonEncoder.flush()
             data = stream.toByteArray()
         } catch (e: IOException) {
-            logger.error("Unable to map", e)
+            logger.error("Unable to map avro record to byte array", e)
         }
         return data
     }
 
     fun avroToJson(data: ByteArray): AvroExampleRecord? {
-        try {
+        return try {
             val decoder = DecoderFactory.get().jsonDecoder(AvroExampleRecord.`SCHEMA$`, String(data))
-            return reader.read(null, decoder)
+            reader.read(null, decoder)
         } catch (e: IOException) {
-            logger.error("Unable to map", e)
-            return null
+            logger.error("Unable to map byte array to avro record", e)
+            null
         }
     }
 }
