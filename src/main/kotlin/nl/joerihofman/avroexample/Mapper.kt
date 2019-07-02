@@ -16,7 +16,7 @@ object Mapper {
     private val logger = LoggerFactory.getLogger(Mapper::class.java)
 
 
-    fun jsonToAvro(person: Person): ByteArray {
+    fun jsonToAvroByteArray(person: Person): ByteArray {
         var data = ByteArray(0)
         val stream = ByteArrayOutputStream()
         try {
