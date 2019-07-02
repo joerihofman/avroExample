@@ -1,0 +1,30 @@
+{
+    "type": "record",
+    "name": "Person",
+    "namespace": "nl.joerihofman.avroexample",
+    "doc": "An example for using Avro",
+    "version": "1",
+
+    "fields": [
+        {"name": "firstName", "type": "string"},
+        {"name": "lastName", "type": "string"},
+        {"name": "address", "type": "string", "doc":  "Complete address, including street name, zip code and city"},
+        {"name": "dateOfBirth", "type": {"type": "int", "logicalType": "date"}, "doc": "Number of days since 1st of Jan. 1970"},
+        {"name":  "gender", "type":  {"type":  "enum", "name": "Gender", "symbols": ["MALE", "FEMALE", "OTHER", "UNSPECIFIED"]}},
+        {
+            "name": "job",
+            "type":  [
+                {
+                    "name": "Job",
+                    "type": "record",
+                    "fields": [
+                        {"name": "company", "type": "string"},
+                        {"name": "title", "type": "string"},
+                        {"name": "salary", "type":  "int", "doc": "Monthly income"}
+                    ]
+                },
+                "null"
+            ]
+        }
+    ]
+}

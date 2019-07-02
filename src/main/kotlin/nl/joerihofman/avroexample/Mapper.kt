@@ -8,34 +8,32 @@ import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
-class Mapper {
+object Mapper {
 
-    companion object {
-        private val writer = SpecificDatumWriter(AvroExampleRecord::class.java)
-        private val reader = SpecificDatumReader(AvroExampleRecord::class.java)
+    private val personWriter = SpecificDatumWriter(Person::class.java)
+    private val personReader = SpecificDatumReader(Person::class.java)
 
-        private val logger = LoggerFactory.getLogger(Mapper::class.java)
-    }
+    private val logger = LoggerFactory.getLogger(Mapper::class.java)
 
 
-    fun jsonToAvro(avroSchema: AvroExampleRecord): ByteArray {
+    fun jsonToAvro(person: Person): ByteArray {
         var data = ByteArray(0)
         val stream = ByteArrayOutputStream()
         try {
-            val jsonEncoder = EncoderFactory.get().jsonEncoder(AvroExampleRecord.`SCHEMA$`, stream)
-            writer.write(avroSchema, jsonEncoder)
+            val jsonEncoder = EncoderFactory.get().jsonEncoder(Person.`SCHEMA$`, stream)
+            personWriter.write(person, jsonEncoder)
             jsonEncoder.flush()
             data = stream.toByteArray()
         } catch (e: IOException) {
-            logger.error("Unable to map avro record to byte array", e)
+            logger.error("Unable to map Avro record to byte array", e)
         }
         return data
     }
 
-    fun avroToJson(data: ByteArray): AvroExampleRecord? {
+    fun avroToJson(data: ByteArray): Person? {
         return try {
-            val decoder = DecoderFactory.get().jsonDecoder(AvroExampleRecord.`SCHEMA$`, String(data))
-            reader.read(null, decoder)
+            val decoder = DecoderFactory.get().jsonDecoder(Person.`SCHEMA$`, String(data))
+            personReader.read(null, decoder)
         } catch (e: IOException) {
             logger.error("Unable to map byte array to avro record", e)
             null
