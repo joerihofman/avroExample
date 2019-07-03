@@ -6,6 +6,7 @@
     "version": "1",
 
     "fields": [
+        {"name": "id", "type": {"type": "string", "logicalType":  "uuid"}},
         {"name": "firstName", "type": "string"},
         {"name": "lastName", "type": "string"},
         {"name": "address", "type": "string", "doc":  "Complete address, including street name, zip code and city"},

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>nl.joerihofman.avroExample</groupId>
+    <groupId>nl.joerihofman</groupId>
     <artifactId>avroExample</artifactId>
     <version>1</version>
 
@@ -104,6 +104,12 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
             <version>1.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.4.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
