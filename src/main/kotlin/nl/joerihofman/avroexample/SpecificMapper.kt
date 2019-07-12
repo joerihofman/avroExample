@@ -76,7 +76,7 @@ object SpecificMapper {
 
     fun personToFile(person: Person): File? {
         return try {
-            val outputFile = File.createTempFile("personexample", ".avro")
+            val outputFile = File.createTempFile("AvroPersonExample", ".avro")
 
             fileWriter.create(Person.`SCHEMA$`, outputFile)
             fileWriter.close()
@@ -107,9 +107,9 @@ object SpecificMapper {
         }
     }
 
-    fun personToFileTest(person: Person)  {
+    fun personToFileForTest(person: Person)  {
         try {
-            val outputFile = File.createTempFile("personexample", ".avro")
+            val outputFile = File.createTempFile("AvroPersonExample", ".avro")
 
             fileWriter.create(person.schema, outputFile)
             fileWriter.close()

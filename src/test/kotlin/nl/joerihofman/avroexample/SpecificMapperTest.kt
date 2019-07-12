@@ -1,10 +1,12 @@
 package nl.joerihofman.avroexample
 
+import org.apache.avro.AvroMissingFieldException
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.time.LocalDate
 import java.util.*
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 object SpecificMapperTest {
@@ -17,35 +19,56 @@ object SpecificMapperTest {
     }
 
     @Test
+    fun missingFieldExample() {
+        assertFailsWith(AvroMissingFieldException::class) {
+            getInvalidPersonFirstNameMissing()
+        }
+    }
+
+    @Test
     fun byteArrayExample() {
         val person = getCompletePerson()
 
-        val byteArray = mapper.personToByteArray(person)
-        println(String(byteArray))
+        val byteArray = mapper.personToByteArray(person).also { println("Person to byte array : ${String(it)}")}
 
-        val personReturned = mapper.byteArrayToPerson(byteArray)
-        println(personReturned)
+        mapper.byteArrayToPerson(byteArray).also { println("Person to byte array : $it") }
+    }
+
+    @Test
+    fun byteArrayExampleWithoutJob() {
+        val person = getPersonWithoutJob()
+
+        val byteArray = mapper.personToByteArray(person).also { println("Person to byte array without job : ${String(it)}") }
+
+        mapper.byteArrayToPerson(byteArray).also { println("Person to byte array without job : $it") }
+    }
+
+    @Test
+    fun byteArrayExampleWithoutJobAndBand() {
+        val person = getPersonWithoutJobAndBand()
+
+        val byteArray = mapper.personToByteArray(person).also { println("Person to byte array without job and band : ${String(it)}") }
+
+        mapper.byteArrayToPerson(byteArray).also { println("Person to byte array without job and band : $it") }
     }
 
     @Test
     fun jsonExample() {
         val person = getCompletePerson()
 
-        val json = mapper.personToJson(person)
-        println(json)
+        val json = mapper.personToJson(person).also { println("Person to json : $it") }
 
-        val personReturned = mapper.jsonToPerson(json)
-        println(personReturned)
+        mapper.jsonToPerson(json).also { println("Person to json : $it") }
     }
 
     @Test
     fun fileExample() {
         val person = getCompletePerson()
 
-        mapper.personToFileTest(person)
+        mapper.personToFileForTest(person)
     }
 
-    fun getCompletePerson(): Person {
+    private fun getCompletePerson(): Person {
         val person = Person.newBuilder()
 
         person.id = UUID.randomUUID().toString()
@@ -65,7 +88,7 @@ object SpecificMapperTest {
         return person.build()
     }
 
-    fun getPersonWithoutJob(): Person {
+    private fun getPersonWithoutJob(): Person {
         val person = Person.newBuilder()
 
         person.id = UUID.randomUUID().toString()
@@ -76,10 +99,12 @@ object SpecificMapperTest {
         person.gender = Gender.UNSPECIFIED
         person.favoriteBand = "ABC"
 
+        person.job = null
+
         return person.build()
     }
 
-    fun getPersonWithoutJobAndBand(): Person {
+    private fun getPersonWithoutJobAndBand(): Person {
         val person = Person.newBuilder()
 
         person.id = UUID.randomUUID().toString()
@@ -89,10 +114,13 @@ object SpecificMapperTest {
         person.dateOfBirth  = LocalDate.now()
         person.gender = Gender.UNSPECIFIED
 
+        person.job = null
+        person.favoriteBand = null
+
         return person.build()
     }
 
-    fun getInvalidPersonFirstNameMissing(): Person {
+    private fun getInvalidPersonFirstNameMissing(): Person {
         val person = Person.newBuilder()
 
         person.id = UUID.randomUUID().toString()
@@ -101,6 +129,7 @@ object SpecificMapperTest {
         person.dateOfBirth  = LocalDate.now()
         person.gender = Gender.UNSPECIFIED
         person.favoriteBand = "ABC"
+        person.job = null
 
         return person.build()
     }
