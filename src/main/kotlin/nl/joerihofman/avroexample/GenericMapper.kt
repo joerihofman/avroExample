@@ -15,18 +15,13 @@ import java.nio.charset.Charset
 
 object GenericMapper {
 
-    private val genericWriter = GenericDatumWriter<Any>()
-    private val fileWriter = DataFileWriter(genericWriter)
-    private val genericReader = GenericDatumReader<Any>()
-
     private val logger = LoggerFactory.getLogger(GenericMapper::class.java)
 
     fun recordToByteArray(record: SpecificRecordBase): ByteArray {
         val stream = ByteArrayOutputStream()
 
-        record.schema.logicalType
-
         return try {
+            val genericWriter = GenericDatumWriter<Any>(record.schema)
             val jsonEncoder = EncoderFactory.get().binaryEncoder(stream, null)
             genericWriter.write(record, jsonEncoder)
             jsonEncoder.flush()
@@ -43,6 +38,7 @@ object GenericMapper {
 
     fun byteArrayToRecord(data: ByteArray): Any? {
         return try {
+            val genericReader = GenericDatumReader<Any>()
             val decoder = DecoderFactory.get().binaryDecoder(data, null)
 
             genericReader.read(null, decoder)
@@ -57,6 +53,7 @@ object GenericMapper {
         val stream = ByteArrayOutputStream()
 
         try {
+            val genericWriter = GenericDatumWriter<Any>(record.schema)
             val jsonEncoder = EncoderFactory.get().jsonEncoder(record.schema, stream)
             genericWriter.write(record, jsonEncoder)
             jsonEncoder.flush()
@@ -69,6 +66,7 @@ object GenericMapper {
 
     fun jsonToRecord(data: String): Any? {
         return try {
+            val genericReader = GenericDatumReader<Any>()
             val decoder = DecoderFactory.get().jsonDecoder(null, data)
 
             genericReader.read(null, decoder)
@@ -81,6 +79,7 @@ object GenericMapper {
 
     fun recordToFile(person: Person): File? {
         return try {
+            val fileWriter = DataFileWriter(GenericDatumWriter<Any>(person.schema))
             val outputFile = File.createTempFile("personexample", ".avro")
 
             fileWriter.create(Person.`SCHEMA$`, outputFile)
@@ -96,6 +95,7 @@ object GenericMapper {
 
     fun fileToRecord(file: File): Any? {
         return try {
+            val genericReader = GenericDatumReader<Any>()
             var person: Any? = null
 
             val fileReader = DataFileReader(file, genericReader)
@@ -114,6 +114,8 @@ object GenericMapper {
 
     fun recordToFileTest(person: Person)  {
         try {
+            val genericReader = GenericDatumReader<Any>()
+            val fileWriter = DataFileWriter(GenericDatumWriter<Any>(person.schema))
             val outputFile = File.createTempFile("personexample", ".avro")
 
             fileWriter.create(person.schema, outputFile)
